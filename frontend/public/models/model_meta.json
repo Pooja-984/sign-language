@@ -1,0 +1,39 @@
+{
+    "inputs": {
+        "dtype": "number",
+        "shape": [
+            63
+        ],
+        "name": "xs"
+    },
+    "outputs": {
+        "dtype": "string",
+        "shape": [
+            20
+        ],
+        "name": "ys"
+    },
+    "dataUrl": null,
+    "labels": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "L",
+        "O",
+        "P",
+        "V",
+        "W",
+        "Y",
+        "Ok",
+        "Bad",
+        "I_love_you",
+        "Good",
+        "Hello",
+        "That"
+    ]
+}
