@@ -38,7 +38,7 @@ const features = [
 
 const FeaturesSection = () => {
     return (
-        <section className="py-24 relative">
+        <section className="py-12 sm:py-16 md:py-24 relative">
             <div className="w-full px-6">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -48,11 +48,11 @@ const FeaturesSection = () => {
                     className="text-center max-w-3xl mx-auto mb-16"
                 >
                     <span className="text-sm font-semibold text-red-500 uppercase tracking-wider mb-2 block bg-red-50 inline-block px-4 py-1 rounded-full border border-red-100">Why Choose SignTrans</span>
-                    <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">Complete Toolkit for <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500">Inclusive</span> Communication</h2>
-                    <p className="text-slate-600 text-lg font-light leading-relaxed">Everything you need to bridge the gap between sign language and spoken language, powered by advanced AI.</p>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6 tracking-tight">Complete Toolkit for <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-500">Inclusive</span> Communication</h2>
+                    <p className="text-slate-600 text-base sm:text-lg font-light leading-relaxed">Everything you need to bridge the gap between sign language and spoken language, powered by advanced AI.</p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
                     {features.map((feature, index) => (
                         <motion.div
                             key={index}
