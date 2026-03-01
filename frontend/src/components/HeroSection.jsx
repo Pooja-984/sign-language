@@ -103,9 +103,9 @@ const HeroSection = () => {
                                     >
                                         <ambientLight intensity={0.5} />
                                         <pointLight position={[10, 10, 10]} intensity={1} />
-                                        <RobotModel position={[0, -2.5, 0]} scale={0.4} color={robotColor} />
+                                        <RobotModel position={[0, -2.5, 0]} scale={0.4} color={robotColor} rotation={[0, -0.4, 0]} />
                                         <Environment preset="studio" />
-                                        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+                                        <OrbitControls enableZoom={false} />
                                     </Canvas>
                                 </Suspense>
                             </ErrorBoundary>

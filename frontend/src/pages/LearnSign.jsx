@@ -39,22 +39,36 @@ function LearnSign() {
         spotLight.position.set(0, 5, 5);
         ref.scene.add(spotLight);
 
+        const canvas = document.getElementById("canvas");
+        let targetWidth = canvas ? canvas.clientWidth : window.innerWidth * 0.57;
+        let targetHeight = canvas ? canvas.clientHeight : window.innerHeight - 70;
+
         ref.camera = new THREE.PerspectiveCamera(
             30,
-            window.innerWidth * 0.57 / (window.innerHeight - 70),
+            targetWidth / targetHeight,
             0.1,
             1000
         )
 
         ref.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        ref.renderer.setSize(window.innerWidth * 0.57, (window.innerHeight - 70));
+        ref.renderer.setSize(targetWidth, targetHeight);
         ref.renderer.setClearColor(0x000000, 0);
 
-        const canvas = document.getElementById("canvas");
         if (canvas) {
             canvas.innerHTML = "";
             canvas.appendChild(ref.renderer.domElement);
         }
+
+        const handleResize = () => {
+            if (canvas && ref.renderer && ref.camera) {
+                const newWidth = canvas.clientWidth;
+                const newHeight = canvas.clientHeight;
+                ref.camera.aspect = newWidth / newHeight;
+                ref.camera.updateProjectionMatrix();
+                ref.renderer.setSize(newWidth, newHeight);
+            }
+        };
+        window.addEventListener("resize", handleResize);
 
         ref.camera.position.z = 1.6;
         ref.camera.position.y = 1.4;
@@ -87,6 +101,9 @@ function LearnSign() {
             }
         );
 
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, [ref, bot]);
 
     ref.animate = () => {
