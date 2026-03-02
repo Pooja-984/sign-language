@@ -163,8 +163,8 @@ function LearnSign() {
     let wordButtons = [];
     for (let i = 0; i < words.wordList.length; i++) {
         wordButtons.push(
-            <div className='col-md-4' key={i}>
-                <button className='mt-2.5 h-[40px] w-full text-slate-700 font-bold bg-white/50 border border-red-100 rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-0.5 text-xs uppercase tracking-wide' onClick={() => {
+            <div className='w-fit h-fit' key={i}>
+                <button className='mt-2.5 min-h-[40px] px-3 text-slate-700 font-bold bg-white/50 border border-red-100 rounded-xl hover:bg-red-500 hover:text-white hover:border-red-500 hover:shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-0.5 text-[11px] uppercase tracking-wide whitespace-nowrap flex items-center justify-center p-2 leading-tight' onClick={() => {
                     if (ref.animations.length === 0) {
                         words[words.wordList[i]](ref);
                     }
@@ -199,7 +199,7 @@ function LearnSign() {
                             <div className="w-1 h-4 bg-red-500 rounded-full"></div>
                             Common Words
                         </h2>
-                        <div className='grid grid-cols-2 gap-3'>
+                        <div className='flex flex-wrap gap-2'>
                             {wordButtons}
                         </div>
                     </div>

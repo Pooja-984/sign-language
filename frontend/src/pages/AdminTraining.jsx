@@ -25,11 +25,25 @@ const AdminTraining = () => {
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [handposeModel, setHandposeModel] = useState(null);
     const [model, setModel] = useState(null); // TFJS Model
-    const [examples, setExamples] = useState([]); // Data collection
+    const [examples, setExamples] = useState(() => {
+        const saved = localStorage.getItem('adminTrainingExamples');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [modelStatus, setModelStatus] = useState("Initializing...");
-    const [classes, setClasses] = useState([]); // Array of { id, name, count, reference }
+    const [classes, setClasses] = useState(() => {
+        const saved = localStorage.getItem('adminTrainingClasses');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [newClassName, setNewClassName] = useState("");
     const [loss, setLoss] = useState(null);
+
+    useEffect(() => {
+        localStorage.setItem('adminTrainingExamples', JSON.stringify(examples));
+    }, [examples]);
+
+    useEffect(() => {
+        localStorage.setItem('adminTrainingClasses', JSON.stringify(classes));
+    }, [classes]);
     const [isTraining, setIsTraining] = useState(false);
     const [currentEpoch, setCurrentEpoch] = useState(0);
     const [totalEpochs, setTotalEpochs] = useState(150); // 150 Epochs for higher accuracy
@@ -846,8 +860,10 @@ const AdminTraining = () => {
                                                     <span className="font-bold text-slate-800 text-sm">{cls.name}</span>
                                                     <button
                                                         onClick={() => {
-                                                            const newClasses = classes.filter(c => c.id !== cls.id);
-                                                            setClasses(newClasses);
+                                                            if (confirm('Delete this class?')) {
+                                                                setClasses(classes.filter(c => c.id !== cls.id));
+                                                                setExamples(examples.filter(e => e.label !== cls.name));
+                                                            }
                                                         }}
                                                         className="text-slate-400 hover:text-red-500 transition-colors p-1"
                                                     >
