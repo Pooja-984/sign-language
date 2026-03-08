@@ -612,12 +612,6 @@ const AdminTraining = () => {
 
     return (
         <div className="flex h-screen overflow-hidden font-sans bg-slate-50 relative">
-            {/* Animated Background Blobs */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-                <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-            </div>
 
             {/* Mobile Sidebar Overlay */}
             {isMobileMenuOpen && (
@@ -655,14 +649,14 @@ const AdminTraining = () => {
                                 key={item.label}
                                 to={item.path}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group ${isActive
+                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group !no-underline ${isActive
                                     ? 'bg-red-50 text-red-700 shadow-sm ring-1 ring-red-100'
                                     : 'text-slate-500 hover:bg-white/50 hover:text-red-600'
                                     }`}
                             >
-                                <item.icon className={`h-5 w-5 ${isActive ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'}`} />
-                                <span className="font-bold text-sm">{item.label}</span>
-                                {isActive && <ChevronRight className="ml-auto h-4 w-4 text-red-400" />}
+                                <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'}`} />
+                                <span className="font-bold text-sm whitespace-nowrap">{item.label}</span>
+                                {isActive && <ChevronRight className="ml-auto h-4 w-4 text-red-400 shrink-0" />}
                             </Link>
                         );
                     })}
@@ -685,8 +679,8 @@ const AdminTraining = () => {
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col relative overflow-hidden bg-transparent z-10">
                 {/* Header - Enhanced Glassmorphism */}
-                <header className="h-24 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
-                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-4">
+                <header className="h-20 md:h-24 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
+                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-3 md:p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-2 md:mt-4">
                         <div className="flex items-center gap-4 flex-1">
                             <button
                                 onClick={() => setIsMobileMenuOpen(true)}
@@ -723,8 +717,8 @@ const AdminTraining = () => {
                 </header>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                    <div className="max-w-screen-2xl mx-auto h-full flex flex-col space-y-8 pb-12">
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                    <div className="max-w-screen-2xl mx-auto h-full flex flex-col space-y-6 md:space-y-8 pb-12">
 
                         {/* Header Section - Red Gradient */}
                         <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-500 rounded-[2rem] p-6 md:p-8 shadow-xl shadow-red-500/20 text-white shrink-0 border border-white/20 group">
@@ -742,23 +736,23 @@ const AdminTraining = () => {
                                     <button
                                         onClick={publishToSkills}
                                         disabled={isTraining || classes.length === 0}
-                                        className="bg-white text-red-600 px-6 py-3 rounded-xl font-bold text-sm hover:bg-red-50 transition-colors shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-white/20 hover:border-white/50 transition-all shadow-lg hover:shadow-white/10 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                                     >
-                                        <Upload className="h-4 w-4" />
+                                        <Upload className="h-4 w-4 group-hover:-translate-y-0.5 transition-transform" />
                                         Publish to Skills
                                     </button>
                                     <button
                                         onClick={trainModel}
-                                        disabled={isTraining || classes.length < 2}
-                                        className={`px-6 py-3 rounded-xl font-bold text-sm text-white shadow-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isTraining ? 'bg-orange-400' : 'bg-orange-500 hover:bg-orange-400 ring-1 ring-white/20'}`}
+                                        disabled={isTraining || classes.length === 0}
+                                        className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-red-600 shadow-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group ${isTraining ? 'bg-white/80' : 'bg-white hover:bg-slate-50 hover:scale-105 hover:shadow-2xl'}`}
                                     >
-                                        <RefreshCw className={`h-4 w-4 ${isTraining ? 'animate-spin' : ''}`} />
+                                        <RefreshCw className={`h-4 w-4 ${isTraining ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                                         {isTraining ? "Training..." : "Train Model"}
                                     </button>
                                     <button
                                         onClick={() => setIsTesting(!isTesting)}
                                         disabled={isTraining || modelStatus !== "Training Complete!" || !isCameraOn}
-                                        className={`px-6 py-3 rounded-xl font-bold text-sm text-white shadow-lg flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isTesting ? 'bg-red-500 hover:bg-red-600' : 'bg-green-600 hover:bg-green-500'}`}
+                                        className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group ${isTesting ? 'bg-slate-900/40 text-white hover:bg-slate-900/60 backdrop-blur-md' : 'bg-emerald-500 text-white hover:bg-emerald-400 hover:shadow-emerald-500/30 ring-1 ring-white/20 hover:-translate-y-0.5'}`}
                                     >
                                         {isTesting ? "Stop Testing" : "Test Model"}
                                     </button>
@@ -766,9 +760,9 @@ const AdminTraining = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:h-full min-h-[600px]">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 lg:h-full min-h-[600px]">
                             {/* Camera Area */}
-                            <div className="lg:col-span-2 bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 flex flex-col relative overflow-hidden">
+                            <div className="lg:col-span-2 bg-white/70 backdrop-blur-2xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 flex flex-col relative overflow-hidden min-h-[400px]">
                                 <div className="relative flex-1 bg-slate-900 flex items-center justify-center overflow-hidden rounded-t-[2rem]">
                                     {!isCameraOn && (
                                         <div className="text-center text-slate-500">
@@ -825,17 +819,17 @@ const AdminTraining = () => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="p-6 bg-white/70 backdrop-blur-xl border-t border-slate-100 flex justify-center shrink-0">
+                                <div className="p-4 md:p-6 bg-white/70 backdrop-blur-xl border-t border-slate-100 flex justify-center shrink-0">
                                     {!isCameraOn ? (
                                         <button
                                             onClick={startCamera}
                                             disabled={modelStatus !== "Handpose Ready"}
-                                            className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-red-600 px-6 py-4 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-500 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                            className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-red-600 px-6 py-3 md:py-4 text-sm font-bold text-white shadow-lg shadow-red-600/20 hover:bg-red-500 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             <Camera className="h-5 w-5" /> {modelStatus === "Handpose Ready" ? "Activate Camera" : "Loading Model..."}
                                         </button>
                                     ) : (
-                                        <button onClick={stopCamera} className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-red-50 text-red-600 border border-red-100 px-6 py-4 text-sm font-bold shadow-sm hover:bg-red-100 transition-all">
+                                        <button onClick={stopCamera} className="w-full inline-flex justify-center items-center gap-2 rounded-xl bg-red-50 text-red-600 border border-red-100 px-6 py-3 md:py-4 text-sm font-bold shadow-sm hover:bg-red-100 transition-all">
                                             <CameraOff className="h-5 w-5" /> Deactivate Camera
                                         </button>
                                     )}
@@ -843,8 +837,8 @@ const AdminTraining = () => {
                             </div>
 
                             {/* Controls Area */}
-                            <div className="flex flex-col gap-6 lg:h-[700px]">
-                                <div className={`bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 border border-white/50 relative ${isTesting ? 'opacity-50 pointer-events-none select-none grayscale' : ''}`}>
+                            <div className="flex flex-col gap-6 lg:h-[700px] pb-8 md:pb-0">
+                                <div className={`bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 border border-white/50 relative shrink-0 ${isTesting ? 'opacity-50 pointer-events-none select-none grayscale' : ''}`}>
                                     <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                                         <Plus className="h-4 w-4 text-red-600" /> New Skill Class
                                     </h3>

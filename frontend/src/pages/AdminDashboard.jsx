@@ -61,12 +61,6 @@ const AdminDashboard = () => {
 
     return (
         <div className="flex h-screen overflow-hidden font-sans bg-slate-50 relative">
-            {/* Animated Background Blobs - Matching Login/User View */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-                <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-            </div>
 
             {/* Mobile Sidebar Overlay */}
             {isMobileMenuOpen && (
@@ -104,14 +98,14 @@ const AdminDashboard = () => {
                                 key={item.label}
                                 to={item.path}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group ${isActive
+                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group !no-underline ${isActive
                                     ? 'bg-red-50 text-red-700 shadow-sm ring-1 ring-red-100'
                                     : 'text-slate-500 hover:bg-white/50 hover:text-red-600'
                                     }`}
                             >
-                                <item.icon className={`h-5 w-5 ${isActive ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'}`} />
-                                <span className="font-bold text-sm">{item.label}</span>
-                                {isActive && <ChevronRight className="ml-auto h-4 w-4 text-red-400" />}
+                                <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'}`} />
+                                <span className="font-bold text-sm whitespace-nowrap">{item.label}</span>
+                                {isActive && <ChevronRight className="ml-auto h-4 w-4 text-red-400 shrink-0" />}
                             </Link>
                         );
                     })}
@@ -134,8 +128,8 @@ const AdminDashboard = () => {
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col relative overflow-hidden bg-transparent z-10">
                 {/* Header - Enhanced Glassmorphism */}
-                <header className="h-24 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
-                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-4">
+                <header className="h-20 md:h-24 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
+                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-3 md:p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-2 md:mt-4">
                         <div className="flex items-center gap-4 flex-1">
                             <button
                                 onClick={() => setIsMobileMenuOpen(true)}
@@ -172,8 +166,8 @@ const AdminDashboard = () => {
                 </header>
 
                 {/* Dashboard Content */}
-                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                    <div className="w-full max-w-6xl mx-auto space-y-8 pb-12">
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+                    <div className="w-full max-w-screen-2xl mx-auto space-y-6 md:space-y-8 pb-12">
 
                         {/* Welcome Section - Red Gradient */}
                         <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-500 rounded-[2rem] p-6 md:p-10 shadow-xl shadow-red-500/20 text-white border border-white/20 group">
@@ -189,7 +183,7 @@ const AdminDashboard = () => {
                                     You have 3 pending model reviews and 12 new user registrations today.
                                 </p>
                                 <div className="mt-8 flex flex-wrap gap-4">
-                                    <Link to="/admin/training" className="group relative overflow-hidden bg-white text-red-600 px-8 py-4 rounded-xl font-bold hover:bg-red-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                                    <Link to="/admin/training" className="group relative overflow-hidden bg-white text-red-600 px-8 py-4 rounded-xl font-bold hover:bg-red-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 !no-underline">
                                         <span className="relative z-10">Train New Model</span>
                                     </Link>
                                     <button className="bg-black/20 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-black/30 transition-all">
@@ -200,7 +194,7 @@ const AdminDashboard = () => {
                         </div>
 
                         {/* Quick Stats Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {[
                                 { label: "Total Users", value: loading ? "..." : stats.totalUsers, change: "+12%", icon: Users, color: "red" },
                                 { label: "Trained Models", value: loading ? "..." : stats.totalModels, change: "+3 New", icon: Brain, color: "orange" },
@@ -227,19 +221,19 @@ const AdminDashboard = () => {
                         </div>
 
                         {/* Actions Grid */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                             {/* Card 1 */}
-                            <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] border border-white/50 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl transition-all">
-                                <div className="p-8 border-b border-slate-100/50 flex items-center justify-between">
-                                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+                            <div className="bg-white/70 backdrop-blur-2xl rounded-[2rem] md:rounded-[2.5rem] border border-white/50 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl transition-all">
+                                <div className="p-6 md:p-8 border-b border-slate-100/50 flex items-center justify-between">
+                                    <h3 className="text-base md:text-lg font-bold text-slate-800 flex items-center gap-3">
                                         <div className="bg-red-50 p-2 rounded-lg text-red-500">
                                             <Camera className="h-5 w-5" />
                                         </div>
                                         Recent Training Activity
                                     </h3>
-                                    <button className="text-sm text-red-500 font-bold hover:text-red-600 hover:bg-red-50 px-3 py-1 rounded-lg transition-colors">View All</button>
+                                    <button className="text-xs md:text-sm text-red-500 font-bold hover:text-red-600 hover:bg-red-50 px-3 py-1 rounded-lg transition-colors">View All</button>
                                 </div>
-                                <div className="p-8">
+                                <div className="p-6 md:p-8">
                                     <div className="space-y-4">
                                         {loading ? (
                                             <p className="text-slate-500 text-sm font-medium">Loading activity...</p>
@@ -267,38 +261,38 @@ const AdminDashboard = () => {
                                             </div>
                                         )}
                                     </div>
-                                    <Link to="/admin/training" className="mt-8 block w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-center text-sm font-bold text-slate-400 hover:border-red-400 hover:text-red-500 hover:bg-red-50 transition-all">
+                                    <Link to="/admin/training" className="mt-8 block w-full py-4 border-2 border-dashed border-slate-200 rounded-2xl text-center text-sm font-bold text-slate-400 hover:border-red-400 hover:text-red-500 hover:bg-red-50 transition-all !no-underline">
                                         + Start New Training Session
                                     </Link>
                                 </div>
                             </div>
 
                             {/* Card 2: Recent Users */}
-                            <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] border border-white/50 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl transition-all">
-                                <div className="p-8 border-b border-slate-100/50 flex items-center justify-between">
-                                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-3">
+                            <div className="bg-white/70 backdrop-blur-2xl rounded-[2rem] md:rounded-[2.5rem] border border-white/50 overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-2xl transition-all">
+                                <div className="p-6 md:p-8 border-b border-slate-100/50 flex items-center justify-between">
+                                    <h3 className="text-base md:text-lg font-bold text-slate-800 flex items-center gap-3">
                                         <div className="bg-orange-50 p-2 rounded-lg text-orange-500">
                                             <Users className="h-5 w-5" />
                                         </div>
                                         Recent Users
                                     </h3>
-                                    <button className="text-sm text-orange-500 font-bold hover:text-orange-600 hover:bg-orange-50 px-3 py-1 rounded-lg transition-colors">View All</button>
+                                    <button className="text-xs md:text-sm text-orange-500 font-bold hover:text-orange-600 hover:bg-orange-50 px-3 py-1 rounded-lg transition-colors">View All</button>
                                 </div>
-                                <div className="p-8">
+                                <div className="p-6 md:p-8">
                                     <div className="space-y-4">
                                         {loading ? (
                                             <p className="text-slate-500 text-sm font-medium">Loading users...</p>
                                         ) : stats.recentUsers && stats.recentUsers.length > 0 ? (
                                             stats.recentUsers.map((u, i) => (
                                                 <div key={i} className="flex items-center gap-4 p-4 hover:bg-white/50 rounded-2xl transition-all cursor-pointer group border border-transparent hover:border-slate-100 hover:shadow-sm">
-                                                    <div className="h-12 w-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 group-hover:scale-110 transition-transform shadow-sm">
-                                                        <span className="font-black text-sm">{u.username ? u.username[0].toUpperCase() : 'U'}</span>
+                                                    <div className="h-10 w-10 md:h-12 md:w-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 group-hover:scale-110 transition-transform shadow-sm shrink-0">
+                                                        <span className="font-black text-xs md:text-sm">{u.username ? u.username[0].toUpperCase() : 'U'}</span>
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-orange-700 transition-colors">{u.username || 'Unknown'}</h4>
-                                                        <p className="text-xs text-slate-500 font-medium mt-0.5">{u.email}</p>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h4 className="text-sm font-bold text-slate-900 group-hover:text-orange-700 transition-colors truncate">{u.username || 'Unknown'}</h4>
+                                                        <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">{u.email}</p>
                                                     </div>
-                                                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wide rounded-full shadow-sm ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                                                    <span className={`px-2 md:px-3 py-1 text-[10px] font-bold uppercase tracking-wide rounded-full shadow-sm shrink-0 ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
                                                         {u.role}
                                                     </span>
                                                 </div>

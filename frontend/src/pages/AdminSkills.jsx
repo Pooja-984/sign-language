@@ -95,12 +95,6 @@ const AdminSkills = () => {
 
     return (
         <div className="flex h-screen overflow-hidden font-sans bg-slate-50 relative">
-            {/* Animated Background Blobs */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-                <div className="absolute top-[-10%] right-[-10%] w-96 h-96 bg-orange-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-                <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-            </div>
 
             {/* Mobile Sidebar Overlay */}
             {isMobileMenuOpen && (
@@ -138,14 +132,14 @@ const AdminSkills = () => {
                                 key={item.label}
                                 to={item.path}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group ${isActive
+                                className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group !no-underline ${isActive
                                     ? 'bg-red-50 text-red-700 shadow-sm ring-1 ring-red-100'
                                     : 'text-slate-500 hover:bg-white/50 hover:text-red-600'
                                     }`}
                             >
-                                <item.icon className={`h-5 w-5 ${isActive ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'}`} />
-                                <span className="font-bold text-sm">{item.label}</span>
-                                {isActive && <ChevronRight className="ml-auto h-4 w-4 text-red-400" />}
+                                <item.icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-red-600' : 'text-slate-400 group-hover:text-red-500'}`} />
+                                <span className="font-bold text-sm whitespace-nowrap">{item.label}</span>
+                                {isActive && <ChevronRight className="ml-auto h-4 w-4 text-red-400 shrink-0" />}
                             </Link>
                         );
                     })}
@@ -168,8 +162,8 @@ const AdminSkills = () => {
             {/* Main Content */}
             <main className="flex-1 flex flex-col relative overflow-hidden h-full bg-transparent z-10">
                 {/* Header - Enhanced Glassmorphism */}
-                <header className="h-20 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
-                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-4">
+                <header className="h-20 md:h-24 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
+                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-3 md:p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-2 md:mt-4">
                         <div className="flex items-center gap-4 flex-1">
                             <button
                                 onClick={() => setIsMobileMenuOpen(true)}
@@ -207,7 +201,7 @@ const AdminSkills = () => {
                     </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
                     <div className="max-w-screen-2xl mx-auto w-full pb-12">
 
                         {/* Actions Bar */}
@@ -216,7 +210,7 @@ const AdminSkills = () => {
                                 <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight">Skill Library</h2>
                                 <span className="text-slate-400 text-xs md:text-sm font-medium">{skills.length} skills total</span>
                             </div>
-                            <Link to="/admin/training" className="group relative overflow-hidden bg-white text-red-600 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2">
+                            <Link to="/admin/training" className="group relative overflow-hidden bg-white text-red-600 px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-red-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center gap-2 !no-underline">
                                 <Plus className="h-4 w-4" /> Train New Skill
                             </Link>
                         </div>
@@ -284,7 +278,7 @@ const AdminSkills = () => {
                                 </div>
                                 <h3 className="text-slate-900 font-bold text-2xl mb-2">No Skills Found</h3>
                                 <p className="text-slate-500 mb-8 max-w-sm mx-auto">It looks like the library is empty. Start by training your first gesture recognition model.</p>
-                                <Link to="/admin/training" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold rounded-xl hover:from-red-700 hover:to-red-600 transition-all shadow-lg hover:shadow-red-500/30 hover:-translate-y-1">
+                                <Link to="/admin/training" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-red-600 to-red-500 text-white font-bold rounded-xl hover:from-red-700 hover:to-red-600 transition-all shadow-lg hover:shadow-red-500/30 hover:-translate-y-1 !no-underline">
                                     <Plus className="h-5 w-5" /> Create First Skill
                                 </Link>
                             </div>
