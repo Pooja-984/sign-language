@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Languages, Menu, X, Zap, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -9,6 +9,17 @@ const Navbar = () => {
     const [userRole, setUserRole] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const handleProtectedLink = (e, path) => {
+        const protectedPaths = ['/sign-kit/learn-sign', '/sign-kit/convert', '/training', '/skills/test'];
+        if (!isAuthenticated && protectedPaths.includes(path)) {
+            e.preventDefault();
+            if (location.pathname !== '/login') {
+                navigate('/login');
+            }
+        }
+    };
 
     useEffect(() => {
         // Scroll handler
@@ -83,6 +94,7 @@ const Navbar = () => {
                                 <Link
                                     key={link.name}
                                     to={link.path}
+                                    onClick={(e) => handleProtectedLink(e, link.path)}
                                     className={`relative px-3 lg:px-5 py-2 text-xs lg:text-sm font-semibold rounded-full transition-all duration-300 !no-underline whitespace-nowrap ${isActive(link.path)
                                         ? 'text-white shadow-md bg-red-600 shadow-red-500/30'
                                         : 'text-slate-600 hover:text-red-600 hover:bg-red-50'
@@ -95,6 +107,7 @@ const Navbar = () => {
 
                         <Link
                             to="/skills/test"
+                            onClick={(e) => handleProtectedLink(e, '/skills/test')}
                             className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm font-bold text-slate-700 hover:text-red-600 transition-colors mr-3 lg:mr-6 group !no-underline whitespace-nowrap"
                         >
                             <div className="p-1 lg:p-1.5 rounded-full bg-amber-50 group-hover:bg-amber-100 transition-colors">
@@ -153,7 +166,10 @@ const Navbar = () => {
                                 <Link
                                     key={link.name}
                                     to={link.path}
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={(e) => {
+                                        handleProtectedLink(e, link.path);
+                                        setIsOpen(false);
+                                    }}
                                     className={`block px-5 py-4 rounded-xl text-base font-medium transition-all !no-underline ${isActive(link.path)
                                         ? 'bg-red-50 text-red-600 shadow-sm border border-red-100'
                                         : 'text-slate-600 hover:bg-slate-50 hover:text-red-600'
@@ -165,7 +181,10 @@ const Navbar = () => {
                             <div className="h-px bg-slate-100 my-4 mx-2"></div>
                             <Link
                                 to="/skills/test"
-                                onClick={() => setIsOpen(false)}
+                                onClick={(e) => {
+                                    handleProtectedLink(e, '/skills/test');
+                                    setIsOpen(false);
+                                }}
                                 className="flex items-center gap-3 px-5 py-4 rounded-xl text-base font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-all !no-underline"
                             >
                                 <Zap className="h-5 w-5 text-amber-500 fill-current" />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Brain, Users, Settings, LogOut, Shield, Bell, Search, Activity, Camera, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Brain, Users, Settings, LogOut, Shield, Bell, Search, Activity, Camera, ChevronRight, Menu, X } from 'lucide-react';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -13,7 +13,7 @@ const AdminDashboard = () => {
         recentUsers: []
     });
     const [loading, setLoading] = useState(true);
-
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 
     useEffect(() => {
@@ -68,16 +68,32 @@ const AdminDashboard = () => {
                 <div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
             </div>
 
+            {/* Mobile Sidebar Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
             {/* Sidebar - Enhanced Glassmorphism */}
-            <aside className="w-72 bg-white/70 backdrop-blur-2xl border-r border-white/50 flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.04)] z-20 m-4 rounded-3xl h-[calc(100vh-2rem)]">
-                <div className="p-8 border-b border-white/20 flex items-center gap-3">
-                    <div className="h-10 w-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/20">
-                        <Shield className="text-white h-6 w-6" />
+            <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-72 bg-white/90 md:bg-white/70 backdrop-blur-2xl border-r border-white/50 flex flex-col shadow-[0_8px_30px_rgb(0,0,0,0.04)] m-4 rounded-3xl h-[calc(100vh-2rem)] transform transition-transform duration-300 ease-in-out md:translate-x-0 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-[120%]'}`}>
+                <div className="p-8 border-b border-white/20 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/20">
+                            <Shield className="text-white h-6 w-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold tracking-tight text-slate-800">SignTrans</h2>
+                            <span className="text-xs text-red-500 uppercase tracking-widest font-bold">Admin Panel</span>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold tracking-tight text-slate-800">SignTrans</h2>
-                        <span className="text-xs text-red-500 uppercase tracking-widest font-bold">Admin Panel</span>
-                    </div>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="p-2 text-slate-400 hover:text-red-500 md:hidden"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
                 </div>
 
                 <nav className="flex-1 px-4 py-8 space-y-2 overflow-y-auto custom-scrollbar">
@@ -87,6 +103,7 @@ const AdminDashboard = () => {
                             <Link
                                 key={item.label}
                                 to={item.path}
+                                onClick={() => setIsMobileMenuOpen(false)}
                                 className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 group ${isActive
                                     ? 'bg-red-50 text-red-700 shadow-sm ring-1 ring-red-100'
                                     : 'text-slate-500 hover:bg-white/50 hover:text-red-600'
@@ -117,9 +134,15 @@ const AdminDashboard = () => {
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col relative overflow-hidden bg-transparent z-10">
                 {/* Header - Enhanced Glassmorphism */}
-                <header className="h-24 bg-transparent flex items-center justify-between px-8 z-10 sticky top-0">
-                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-4 shadow-sm flex items-center justify-between mx-4 mt-4">
+                <header className="h-24 bg-transparent flex items-center justify-between px-4 md:px-8 z-10 sticky top-0">
+                    <div className="flex-1 bg-white/70 backdrop-blur-2xl border border-white/50 rounded-2xl p-4 shadow-sm flex items-center justify-between mx-2 md:mx-4 mt-4">
                         <div className="flex items-center gap-4 flex-1">
+                            <button
+                                onClick={() => setIsMobileMenuOpen(true)}
+                                className="p-2 -ml-2 text-slate-500 hover:text-red-600 md:hidden"
+                            >
+                                <Menu className="h-6 w-6" />
+                            </button>
                             <div className="relative w-full max-w-md hidden md:block">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                                 <input
@@ -153,7 +176,7 @@ const AdminDashboard = () => {
                     <div className="w-full max-w-6xl mx-auto space-y-8 pb-12">
 
                         {/* Welcome Section - Red Gradient */}
-                        <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-500 rounded-[2rem] p-10 shadow-xl shadow-red-500/20 text-white border border-white/20 group">
+                        <div className="relative overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-500 rounded-[2rem] p-6 md:p-10 shadow-xl shadow-red-500/20 text-white border border-white/20 group">
                             <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-10 rotate-12 transition-transform duration-700 group-hover:rotate-45 group-hover:scale-110">
                                 <Shield size={400} />
                             </div>
@@ -161,8 +184,8 @@ const AdminDashboard = () => {
                                 <div className="inline-block px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold uppercase tracking-wider mb-4">
                                     System Status: Optimal
                                 </div>
-                                <h1 className="text-4xl font-black mb-3 text-white tracking-tight">Welcome back, Administrator</h1>
-                                <p className="text-red-50 max-w-xl text-lg font-medium opacity-90">
+                                <h1 className="text-2xl md:text-4xl font-black mb-3 text-white tracking-tight">Welcome back, Administrator</h1>
+                                <p className="text-red-50 max-w-xl text-base md:text-lg font-medium opacity-90">
                                     You have 3 pending model reviews and 12 new user registrations today.
                                 </p>
                                 <div className="mt-8 flex flex-wrap gap-4">
