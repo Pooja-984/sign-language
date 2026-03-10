@@ -144,26 +144,49 @@ const TestSkills = () => {
         }
     };
 
-    // Helper: Sort and process hands (Same as Training.jsx)
+    // Helper to flip/mirror landmarks over wrist X-coordinate
+    const flipHandOverWrist = (landmarks) => {
+        if (!landmarks || landmarks.length === 0) return landmarks;
+        const wristX = landmarks[0].x;
+        return landmarks.map(p => ({ ...p, x: wristX - (p.x - wristX) }));
+    };
+
+    // Helper: Sort and process hands
     const processHands = (results) => {
         if (!results || results.length === 0) {
             return [null, null];
         }
 
-        // Sort by X coordinate of wrist [0]
-        const sorted = [...results].sort((a, b) => {
-            const xA = a.keypoints[0].x;
-            const xB = b.keypoints[0].x;
-            return xA - xB;
-        });
-
         const paddedLandmarks = [null, null];
-        for (let i = 0; i < 2; i++) {
-            if (sorted[i]) {
-                // Map keypoints to simple array or object structure if needed by matching util?
-                // matching util getAlignedLandmarks handles array or object with x,y. 
-                // keypoints are objects with x,y. Perfect.
-                paddedLandmarks[i] = sorted[i].keypoints;
+
+        // 1-Hand Sign: Normalize to Right hand, pad Left hand with Zeros
+        if (results.length === 1) {
+            const hand = results[0];
+            const isLeft = hand.handedness === 'Left';
+            let keypoints = hand.keypoints;
+
+            if (isLeft) {
+                keypoints = flipHandOverWrist(keypoints);
+            }
+
+            paddedLandmarks[0] = null; // Left hand padded
+            paddedLandmarks[1] = keypoints; // Right hand normalized
+
+        } else {
+            // Sort by X coordinate of wrist [0]
+            const sorted = [...results].sort((a, b) => {
+                const xA = a.keypoints[0].x;
+                const xB = b.keypoints[0].x;
+                return xA - xB;
+            });
+
+            for (let i = 0; i < 2; i++) {
+                if (sorted[i]) {
+                    // Map keypoints to simple array or object structure if needed by matching util?
+                    // matching util getAlignedLandmarks handles array or object with x,y. 
+                    // keypoints are objects with x,y. Perfect.
+                    paddedLandmarks[i] = sorted[i].keypoints;
+                }
             }
         }
         return paddedLandmarks;

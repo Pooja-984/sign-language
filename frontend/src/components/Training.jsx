@@ -294,6 +294,19 @@ const Training = () => {
         return dotProduct / (magA * magB);
     };
 
+    // Helper to flip/mirror landmarks over wrist X-coordinate
+    const flipHandOverWrist = (landmarks) => {
+        if (!landmarks || landmarks.length === 0) return landmarks;
+        const getX = (p) => typeof p[0] === 'number' ? p[0] : p.x;
+        const wristX = getX(landmarks[0]);
+        return landmarks.map(p => {
+            if (Array.isArray(p)) {
+                return [wristX - (getX(p) - wristX), p[1], p[2]];
+            }
+            return { ...p, x: wristX - (p.x - wristX) };
+        });
+    };
+
     // Helper: Sort and process hands (Top-left to Bottom-right or purely X based)
     // Left-most hand is Slot 0, Right-most is Slot 1
     const processHands = (results) => {
@@ -304,35 +317,55 @@ const Training = () => {
             };
         }
 
-        // Sort by X coordinate of wrist [0]
-        const sorted = [...results].sort((a, b) => {
-            const xA = a.landmarks[0][0];
-            const xB = b.landmarks[0][0];
-            return xA - xB;
-        });
-
         const paddedLandmarks = [null, null];
         const flatInput = [];
 
-        for (let i = 0; i < 2; i++) {
-            if (sorted[i]) {
-                const rawLandmarks = sorted[i].landmarks;
-                paddedLandmarks[i] = rawLandmarks;
+        // 1-Hand Sign: Normalize to Right hand, pad Left hand with Zeros.
+        if (results.length === 1) {
+            const hand = results[0];
+            const isLeft = hand.handedness === 'Left';
+            let rawLandmarks = hand.landmarks;
 
-                // Align/Normalize landmarks for training input
-                // This makes the model invariant to position, scale, and rotation
-                const aligned = getAlignedLandmarks(rawLandmarks);
-                if (aligned) {
-                    // Flatten x,y only (z is less reliable/relevant after 2D alignment)
-                    // 21 points * 2 coords = 42 floats per hand
-                    flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
+            if (isLeft) {
+                rawLandmarks = flipHandOverWrist(rawLandmarks);
+            }
+
+            // Left Hand slot = Zeros
+            flatInput.push(...new Array(42).fill(0));
+            paddedLandmarks[0] = null;
+
+            // Right Hand slot = Normalized Hand
+            const aligned = getAlignedLandmarks(rawLandmarks);
+            if (aligned) {
+                // Flatten x,y only
+                flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
+            } else {
+                flatInput.push(...new Array(42).fill(0));
+            }
+            paddedLandmarks[1] = rawLandmarks;
+
+        } else {
+            // Sort by X coordinate of wrist [0]
+            const sorted = [...results].sort((a, b) => {
+                const xA = a.landmarks[0][0];
+                const xB = b.landmarks[0][0];
+                return xA - xB;
+            });
+
+            for (let i = 0; i < 2; i++) {
+                if (sorted[i]) {
+                    const rawLandmarks = sorted[i].landmarks;
+                    paddedLandmarks[i] = rawLandmarks;
+
+                    const aligned = getAlignedLandmarks(rawLandmarks);
+                    if (aligned) {
+                        flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
+                    } else {
+                        flatInput.push(...new Array(42).fill(0));
+                    }
                 } else {
-                    // Fallback if alignment fails (shouldn't happen if landmarks exist)
                     flatInput.push(...new Array(42).fill(0));
                 }
-            } else {
-                // Pad with zeros for missing hand (42 zeros)
-                flatInput.push(...new Array(42).fill(0));
             }
         }
 

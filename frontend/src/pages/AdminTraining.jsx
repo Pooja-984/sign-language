@@ -202,6 +202,19 @@ const AdminTraining = () => {
         return dotProduct / (magA * magB);
     };
 
+    // Helper to flip/mirror landmarks over wrist X-coordinate
+    const flipHandOverWrist = (landmarks) => {
+        if (!landmarks || landmarks.length === 0) return landmarks;
+        const getX = (p) => typeof p[0] === 'number' ? p[0] : p.x;
+        const wristX = getX(landmarks[0]);
+        return landmarks.map(p => {
+            if (Array.isArray(p)) {
+                return [wristX - (getX(p) - wristX), p[1], p[2]];
+            }
+            return { ...p, x: wristX - (p.x - wristX) };
+        });
+    };
+
     const processHands = (results) => {
         if (!results || results.length === 0) {
             return {
@@ -210,30 +223,54 @@ const AdminTraining = () => {
             };
         }
 
-        // Sort by X coordinate of wrist [0]
-        const sorted = [...results].sort((a, b) => {
-            const xA = a.landmarks[0][0];
-            const xB = b.landmarks[0][0];
-            return xA - xB;
-        });
-
         const paddedLandmarks = [null, null];
         const flatInput = [];
 
-        for (let i = 0; i < 2; i++) {
-            if (sorted[i]) {
-                const rawLandmarks = sorted[i].landmarks;
-                paddedLandmarks[i] = rawLandmarks;
+        // 1-Hand Sign: Normalize to Right hand, pad Left hand with Zeros.
+        if (results.length === 1) {
+            const hand = results[0];
+            const isLeft = hand.handedness === 'Left';
+            let rawLandmarks = hand.landmarks;
 
-                // Align/Normalize landmarks for training input
-                const aligned = getAlignedLandmarks(rawLandmarks);
-                if (aligned) {
-                    flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
+            if (isLeft) {
+                rawLandmarks = flipHandOverWrist(rawLandmarks);
+            }
+
+            // Left Hand slot = Zeros
+            flatInput.push(...new Array(42).fill(0));
+            paddedLandmarks[0] = null;
+
+            // Right Hand slot = Normalized Hand
+            const aligned = getAlignedLandmarks(rawLandmarks);
+            if (aligned) {
+                flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
+            } else {
+                flatInput.push(...new Array(42).fill(0));
+            }
+            paddedLandmarks[1] = rawLandmarks;
+
+        } else {
+            // Sort by X coordinate of wrist [0]
+            const sorted = [...results].sort((a, b) => {
+                const xA = a.landmarks[0][0];
+                const xB = b.landmarks[0][0];
+                return xA - xB;
+            });
+
+            for (let i = 0; i < 2; i++) {
+                if (sorted[i]) {
+                    const rawLandmarks = sorted[i].landmarks;
+                    paddedLandmarks[i] = rawLandmarks;
+
+                    const aligned = getAlignedLandmarks(rawLandmarks);
+                    if (aligned) {
+                        flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
+                    } else {
+                        flatInput.push(...new Array(42).fill(0));
+                    }
                 } else {
                     flatInput.push(...new Array(42).fill(0));
                 }
-            } else {
-                flatInput.push(...new Array(42).fill(0));
             }
         }
 
