@@ -743,7 +743,7 @@ const AdminTraining = () => {
                                     </button>
                                     <button
                                         onClick={trainModel}
-                                        disabled={isTraining || classes.length === 0}
+                                        disabled={isTraining || classes.length < 2}
                                         className={`w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm text-red-600 shadow-xl flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group ${isTraining ? 'bg-white/80' : 'bg-white hover:bg-slate-50 hover:scale-105 hover:shadow-2xl'}`}
                                     >
                                         <RefreshCw className={`h-4 w-4 ${isTraining ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />

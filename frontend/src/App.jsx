@@ -49,28 +49,14 @@ const ProtectedUserRoute = ({ children }) => {
   return children;
 };
 
-// Component to Redirect Admin from Public Routes (Home, etc.)
-const RedirectAdmin = ({ children }) => {
-  const role = localStorage.getItem('role');
-
-  if (role === 'admin') {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-
-  return children;
-};
-
 function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
     <div className="min-h-screen relative flex flex-col font-sans text-slate-900 bg-white selection:bg-blue-100 selection:text-blue-900">
-      {/* Global Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] bg-red-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div className="absolute top-[-10%] right-[-10%] w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] bg-orange-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-[250px] h-[250px] sm:w-[350px] sm:h-[350px] md:w-[500px] md:h-[500px] bg-pink-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      {/* Global Background */}
+      <div className="fixed inset-0 pointer-events-none -z-10">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
       </div>
 
@@ -79,7 +65,7 @@ function AppContent() {
       {/* Remove padding-top for admin routes to allow full screen control */}
       <main className={`flex-grow ${isAdminRoute ? '' : 'pt-16'} relative z-0`}>
         <Routes>
-          <Route path="/" element={<RedirectAdmin><Home /></RedirectAdmin>} />
+          <Route path="/" element={<ProtectedUserRoute><Home /></ProtectedUserRoute>} />
 
           <Route path="/tutorials" element={<ProtectedUserRoute><Tutorials /></ProtectedUserRoute>} />
           <Route path="/training" element={<ProtectedUserRoute><Training /></ProtectedUserRoute>} />

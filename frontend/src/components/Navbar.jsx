@@ -45,14 +45,17 @@ const Navbar = () => {
         window.location.href = '/login';
     };
 
-    const navLinks = [
+    const navLinks = isAuthenticated ? [
         { name: 'Home', path: '/' },
-        { name: 'Learn Sign', path: '/sign-kit/learn-sign' },
-        { name: 'Avatar Sign', path: '/sign-kit/convert' },
+    ] : [];
 
-        // User requested "Traing model in user view" -> Adding Training link for everyone suitable
-        { name: 'Training', path: '/training' },
-    ];
+    if (isAuthenticated) {
+        navLinks.push(
+            { name: 'Learn Sign', path: '/sign-kit/learn-sign' },
+            { name: 'Avatar Sign', path: '/sign-kit/convert' },
+            { name: 'Training', path: '/training' }
+        );
+    }
 
     // Admin Dashboard Link - STRICTLY Admin Only
     if (userRole === 'admin') {
@@ -75,7 +78,7 @@ const Navbar = () => {
             <div className="w-full px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3 group relative z-50">
+                    <Link to="/" className="flex items-center gap-3 group relative z-50 !no-underline">
                         <div className="relative">
                             <div className="absolute inset-0 bg-red-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
                             <div className="relative p-2.5 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl group-hover:scale-105 transition-transform duration-300 border border-slate-700/50 shadow-lg">
@@ -105,16 +108,18 @@ const Navbar = () => {
                             ))}
                         </div>
 
-                        <Link
-                            to="/skills/test"
-                            onClick={(e) => handleProtectedLink(e, '/skills/test')}
-                            className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm font-bold text-slate-700 hover:text-red-600 transition-colors mr-3 lg:mr-6 group !no-underline whitespace-nowrap"
-                        >
-                            <div className="p-1 lg:p-1.5 rounded-full bg-amber-50 group-hover:bg-amber-100 transition-colors">
-                                <Zap className="h-3 w-3 lg:h-4 lg:w-4 text-amber-500 fill-current group-hover:scale-110 transition-transform" />
-                            </div>
-                            Sign Check
-                        </Link>
+                        {isAuthenticated && (
+                            <Link
+                                to="/skills/test"
+                                onClick={(e) => handleProtectedLink(e, '/skills/test')}
+                                className="flex items-center gap-1 lg:gap-2 text-xs lg:text-sm font-bold text-slate-700 hover:text-red-600 transition-colors mr-3 lg:mr-6 group !no-underline whitespace-nowrap"
+                            >
+                                <div className="p-1 lg:p-1.5 rounded-full bg-amber-50 group-hover:bg-amber-100 transition-colors">
+                                    <Zap className="h-3 w-3 lg:h-4 lg:w-4 text-amber-500 fill-current group-hover:scale-110 transition-transform" />
+                                </div>
+                                Sign Check
+                            </Link>
+                        )}
 
                         <div className="h-8 w-px bg-slate-200 mx-4"></div>
 
@@ -179,17 +184,19 @@ const Navbar = () => {
                                 </Link>
                             ))}
                             <div className="h-px bg-slate-100 my-4 mx-2"></div>
-                            <Link
-                                to="/skills/test"
-                                onClick={(e) => {
-                                    handleProtectedLink(e, '/skills/test');
-                                    setIsOpen(false);
-                                }}
-                                className="flex items-center gap-3 px-5 py-4 rounded-xl text-base font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-all !no-underline"
-                            >
-                                <Zap className="h-5 w-5 text-amber-500 fill-current" />
-                                Sign Check
-                            </Link>
+                            {isAuthenticated && (
+                                <Link
+                                    to="/skills/test"
+                                    onClick={(e) => {
+                                        handleProtectedLink(e, '/skills/test');
+                                        setIsOpen(false);
+                                    }}
+                                    className="flex items-center gap-3 px-5 py-4 rounded-xl text-base font-medium text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-all !no-underline"
+                                >
+                                    <Zap className="h-5 w-5 text-amber-500 fill-current" />
+                                    Sign Check
+                                </Link>
+                            )}
 
                             <div className="pt-4 grid grid-cols-2 gap-3">
                                 {!isAuthenticated ? (

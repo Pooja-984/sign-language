@@ -8,9 +8,7 @@ const CTASection = () => {
         <section className="py-12 sm:py-16 md:py-24 bg-slate-900 overflow-hidden relative">
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
 
-            {/* Abstract Shapes */}
-            <div className="absolute top-0 right-0 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+            {/* Removed Abstract Shapes */}
 
             <div className="w-full px-4 sm:px-6 relative z-10 text-center">
                 <motion.div
