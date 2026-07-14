@@ -32,13 +32,7 @@ A web application that allows users to train and test custom sign language gestu
 * [Node.js](https://nodejs.org/) installed
 * A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster (or local MongoDB server)
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/Pooja-984/sign-language.git
-cd sign-language
-```
-
-### 2. Backend Setup
+### 1. Backend Setup
 1. Navigate to the backend directory:
    ```bash
    cd backend
@@ -58,7 +52,7 @@ cd sign-language
    npm run dev
    ```
 
-### 3. Frontend Setup
+### 2. Frontend Setup
 1. Open a new terminal and navigate to the frontend directory:
    ```bash
    cd frontend
