@@ -122,16 +122,22 @@ const Training = () => {
 
     const startCamera = async () => {
         try {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Camera access is not supported in this browser environment. Please use HTTPS or localhost.");
+                return;
+            }
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                // videoRef.current.play(); // autoPlay handles this
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play().catch(e => console.error("Play failed", e));
+                };
                 setIsCameraOn(true);
                 // Handpose init moved to onLoadedData callback on video tag
             }
         } catch (err) {
             console.error("Error accessing camera:", err);
-            alert("Could not access camera.");
+            alert("Could not access camera. Please allow camera permissions in your browser.");
         }
     };
 
@@ -344,29 +350,50 @@ const Training = () => {
             }
             paddedLandmarks[1] = rawLandmarks;
 
-        } else {
-            // Sort by X coordinate of wrist [0]
-            const sorted = [...results].sort((a, b) => {
-                const xA = a.landmarks[0][0];
-                const xB = b.landmarks[0][0];
-                return xA - xB;
-            });
+        } else if (results.length === 2) {
+            // For 2-handed signs: Handedness determines mapping.
+            // Righty (Default): Left to Left, Right to Right.
+            // Lefty: Mirror the whole screen, Swap Left and Right arrays.
 
-            for (let i = 0; i < 2; i++) {
-                if (sorted[i]) {
-                    const rawLandmarks = sorted[i].landmarks;
-                    paddedLandmarks[i] = rawLandmarks;
+            // First identify which hand MediaPipe labeled as what.
+            let leftHand = results.find(h => h.handedness === 'Left');
+            let rightHand = results.find(h => h.handedness === 'Right');
 
-                    const aligned = getAlignedLandmarks(rawLandmarks);
-                    if (aligned) {
-                        flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
-                    } else {
-                        flatInput.push(...new Array(42).fill(0));
-                    }
-                } else {
-                    flatInput.push(...new Array(42).fill(0));
-                }
+            // Fault Tolerance: What if MediaPipe gets confused and labels them both "Left" or both "Right"?
+            // Fallback to sorting by X-coordinate: physically left-most is "Left".
+            if (!leftHand || !rightHand || (leftHand === rightHand)) {
+                const sorted = [...results].sort((a, b) => {
+                    const xA = a.landmarks[0][0] || a.landmarks[0].x;
+                    const xB = b.landmarks[0][0] || b.landmarks[0].x;
+                    return xA - xB;
+                });
+                leftHand = sorted[0];
+                rightHand = sorted[1];
             }
+
+            // Real fix for tokens: We always store Left Hand going into paddedLandmarks[0] 
+            // and Right Hand going into paddedLandmarks[1].
+            paddedLandmarks[0] = leftHand.landmarks;
+            paddedLandmarks[1] = rightHand.landmarks;
+
+            // Process Left Hand
+            const alignedLeft = getAlignedLandmarks(leftHand.landmarks);
+            if (alignedLeft) {
+                flatInput.push(...alignedLeft.flatMap(p => [p.x, p.y]));
+            } else {
+                flatInput.push(...new Array(42).fill(0));
+            }
+
+            // Process Right Hand
+            const alignedRight = getAlignedLandmarks(rightHand.landmarks);
+            if (alignedRight) {
+                flatInput.push(...alignedRight.flatMap(p => [p.x, p.y]));
+            } else {
+                flatInput.push(...new Array(42).fill(0));
+            }
+        } else {
+            // > 2 hands detected? Unlikely with maxHands: 2, but just in case, pad with zeros.
+            flatInput.push(...new Array(84).fill(0));
         }
 
         return {

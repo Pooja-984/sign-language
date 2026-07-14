@@ -13,20 +13,23 @@ export const GestureContextProvider = ({ children }) => {
     const [handpose, setHandpose] = useState(null);
 
     const startCamera = async () => {
-        if (isCameraOn) return;
         try {
-            console.log("Requesting Camera Access...");
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Camera access is not supported in this browser environment. Please use HTTPS or localhost.");
+                return;
+            }
             const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
             setStream(mediaStream);
-            setIsCameraOn(true);
-
             if (videoRef.current) {
                 videoRef.current.srcObject = mediaStream;
-                videoRef.current.play();
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play().catch(e => console.error("Play failed", e));
+                };
+                setIsCameraOn(true);
             }
         } catch (err) {
             console.error("Error accessing camera:", err);
-            setModelStatus("Camera Error: " + err.message);
+            alert("Could not access camera. Please allow camera permissions in your browser.");
         }
     };
 

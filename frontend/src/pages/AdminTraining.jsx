@@ -133,14 +133,21 @@ const AdminTraining = () => {
 
     const startCamera = async () => {
         try {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Camera access is not supported in this browser environment. Please use HTTPS or localhost.");
+                return;
+            }
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play().catch(e => console.error("Play failed", e));
+                };
                 setIsCameraOn(true);
             }
         } catch (err) {
             console.error("Error accessing camera:", err);
-            alert("Could not access camera.");
+            alert("Could not access camera. Please allow camera permissions in your browser.");
         }
     };
 
@@ -249,29 +256,60 @@ const AdminTraining = () => {
             }
             paddedLandmarks[1] = rawLandmarks;
 
-        } else {
-            // Sort by X coordinate of wrist [0]
-            const sorted = [...results].sort((a, b) => {
-                const xA = a.landmarks[0][0];
-                const xB = b.landmarks[0][0];
-                return xA - xB;
-            });
+        } else if (results.length === 2) {
+            // For 2-handed signs: Handedness determines mapping.
+            // Righty (Default): Left to Left, Right to Right.
+            // Lefty: Mirror the whole screen, Swap Left and Right arrays.
 
-            for (let i = 0; i < 2; i++) {
-                if (sorted[i]) {
-                    const rawLandmarks = sorted[i].landmarks;
-                    paddedLandmarks[i] = rawLandmarks;
+            // First identify which hand MediaPipe labeled as what.
+            let leftHand = results.find(h => h.handedness === 'Left');
+            let rightHand = results.find(h => h.handedness === 'Right');
 
-                    const aligned = getAlignedLandmarks(rawLandmarks);
-                    if (aligned) {
-                        flatInput.push(...aligned.flatMap(p => [p.x, p.y]));
-                    } else {
-                        flatInput.push(...new Array(42).fill(0));
-                    }
-                } else {
-                    flatInput.push(...new Array(42).fill(0));
-                }
+            // Fault Tolerance: What if MediaPipe gets confused and labels them both "Left" or both "Right"?
+            // Fallback to sorting by X-coordinate: physically left-most is "Left".
+            if (!leftHand || !rightHand || (leftHand === rightHand)) {
+                const sorted = [...results].sort((a, b) => {
+                    const xA = a.landmarks[0][0] || a.landmarks[0].x;
+                    const xB = b.landmarks[0][0] || b.landmarks[0].x;
+                    return xA - xB;
+                });
+                leftHand = sorted[0];
+                rightHand = sorted[1];
             }
+
+            // Determine if the *signer* is Left-Handed based on physical positioning.
+            // Usually, righties have their right hand doing the action (often closer to camera or crossing over).
+            // A simple heuristic for this project: we will assume standard Righty mapping 
+            // unless the user explicitly triggers a Lefty mode, OR we just always store 
+            // Left->Left/Right->Right and rely on X-coordinates if Handedness fails.
+
+            // Real fix for tokens: We always store Left Hand going into paddedLandmarks[0] 
+            // and Right Hand going into paddedLandmarks[1].
+            // If the signer is Left-Hand dominant, they should ideally flip the whole scene. 
+            // Since we don't have a "Lefty Mode" toggle built in yet, we will map based strictly on 
+            // Handedness/Physical Position so the AI learns perfectly.
+
+            paddedLandmarks[0] = leftHand.landmarks;
+            paddedLandmarks[1] = rightHand.landmarks;
+
+            // Process Left Hand
+            const alignedLeft = getAlignedLandmarks(leftHand.landmarks);
+            if (alignedLeft) {
+                flatInput.push(...alignedLeft.flatMap(p => [p.x, p.y]));
+            } else {
+                flatInput.push(...new Array(42).fill(0));
+            }
+
+            // Process Right Hand
+            const alignedRight = getAlignedLandmarks(rightHand.landmarks);
+            if (alignedRight) {
+                flatInput.push(...alignedRight.flatMap(p => [p.x, p.y]));
+            } else {
+                flatInput.push(...new Array(42).fill(0));
+            }
+        } else {
+            // > 2 hands detected? Unlikely with maxHands: 2, but just in case, pad with zeros.
+            flatInput.push(...new Array(84).fill(0));
         }
 
         return {
@@ -899,7 +937,24 @@ const AdminTraining = () => {
                                 <div className={`flex-1 bg-white/70 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/50 overflow-hidden flex flex-col ${isTesting ? 'opacity-50 pointer-events-none select-none grayscale' : ''}`}>
                                     <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                                         <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Active Classes</h3>
-                                        <span className="bg-white border border-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-md">{classes.length}</span>
+                                        <div className="flex items-center gap-3">
+                                            {classes.length > 0 && (
+                                                <button
+                                                    onClick={() => {
+                                                        if (confirm('Are you sure you want to delete ALL classes and training data?')) {
+                                                            setClasses([]);
+                                                            setExamples([]);
+                                                            setLoss(null);
+                                                            setModelStatus("Ready");
+                                                        }
+                                                    }}
+                                                    className="text-[10px] font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors uppercase tracking-wider"
+                                                >
+                                                    Reset All
+                                                </button>
+                                            )}
+                                            <span className="bg-white border border-slate-200 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-md">{classes.length}</span>
+                                        </div>
                                     </div>
                                     <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                                         {classes.length === 0 && (

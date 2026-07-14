@@ -38,6 +38,8 @@ const Register = () => {
             });
             console.log('Registration Success:', res.data);
             localStorage.setItem('token', res.data.token);
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+            localStorage.setItem('role', res.data.user.role);
             navigate('/translator');
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed. Please try again.');

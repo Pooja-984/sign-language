@@ -120,13 +120,21 @@ const TestSkills = () => {
 
     const startCamera = async () => {
         try {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Camera access is not supported in this browser environment. Please use HTTPS or localhost.");
+                return;
+            }
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
+                videoRef.current.onloadedmetadata = () => {
+                    videoRef.current.play().catch(e => console.error("Play failed", e));
+                };
                 setIsCameraOn(true);
             }
         } catch (err) {
             console.error("Error accessing camera:", err);
+            alert("Could not access camera. Please allow camera permissions in your browser.");
         }
     };
 
@@ -172,22 +180,36 @@ const TestSkills = () => {
             paddedLandmarks[0] = null; // Left hand padded
             paddedLandmarks[1] = keypoints; // Right hand normalized
 
-        } else {
-            // Sort by X coordinate of wrist [0]
-            const sorted = [...results].sort((a, b) => {
-                const xA = a.keypoints[0].x;
-                const xB = b.keypoints[0].x;
-                return xA - xB;
-            });
+        } else if (results.length === 2) {
+            // For 2-handed signs: Handedness determines mapping.
+            // Righty (Default): Left to Left, Right to Right.
+            // Lefty: Mirror the whole screen, Swap Left and Right arrays.
 
-            for (let i = 0; i < 2; i++) {
-                if (sorted[i]) {
-                    // Map keypoints to simple array or object structure if needed by matching util?
-                    // matching util getAlignedLandmarks handles array or object with x,y. 
-                    // keypoints are objects with x,y. Perfect.
-                    paddedLandmarks[i] = sorted[i].keypoints;
-                }
+            // First identify which hand MediaPipe labeled as what.
+            let leftHand = results.find(h => h.handedness === 'Left');
+            let rightHand = results.find(h => h.handedness === 'Right');
+
+            // Fault Tolerance: What if MediaPipe gets confused and labels them both "Left" or both "Right"?
+            // Fallback to sorting by X-coordinate: physically left-most is "Left".
+            if (!leftHand || !rightHand || (leftHand === rightHand)) {
+                const sorted = [...results].sort((a, b) => {
+                    const xA = a.keypoints[0].x;
+                    const xB = b.keypoints[0].x;
+                    return xA - xB;
+                });
+                leftHand = sorted[0];
+                rightHand = sorted[1];
             }
+
+            // Real fix for tokens: We always store Left Hand going into paddedLandmarks[0] 
+            // and Right Hand going into paddedLandmarks[1].
+            paddedLandmarks[0] = leftHand.keypoints;
+            paddedLandmarks[1] = rightHand.keypoints;
+
+        } else {
+            // > 2 hands detected? Unlikely, but fallback to nulls.
+            paddedLandmarks[0] = null;
+            paddedLandmarks[1] = null;
         }
         return paddedLandmarks;
     };
