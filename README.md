@@ -34,8 +34,8 @@ A web application that allows users to train and test custom sign language gestu
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/Rahul-kulal-73/morden_sign_langauge_.git
-cd morden_sign_langauge_
+git clone https://github.com/Pooja-984/sign-language.git
+cd sign-language
 ```
 
 ### 2. Backend Setup
